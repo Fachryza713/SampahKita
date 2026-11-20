@@ -8,7 +8,15 @@ sealed class Screen(val route: String, val judul: String) {
     data object Home : Screen("home", "Beranda")
     data object Peta : Screen("peta", "Peta Bank Sampah")
     data object Katalog : Screen("katalog", "Katalog Harga")
-    data object TiketSetor : Screen("tiket_setor", "Setor Sampah")
+    data object TiketSetor : Screen("tiket_setor", "Setor Sampah") {
+        const val ARG_BANK_SAMPAH_ID = "bankSampahId"
+
+        /** Pola route dengan argumen opsional; "tiket_setor" saja tetap cocok. */
+        val routePattern = "$route?$ARG_BANK_SAMPAH_ID={$ARG_BANK_SAMPAH_ID}"
+
+        fun createRoute(bankSampahId: String? = null): String =
+            if (bankSampahId == null) route else "$route?$ARG_BANK_SAMPAH_ID=$bankSampahId"
+    }
     data object Tabungan : Screen("tabungan", "Buku Tabungan")
     data object Pencairan : Screen("pencairan", "Pencairan Saldo")
 

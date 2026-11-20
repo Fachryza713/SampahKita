@@ -32,6 +32,10 @@ import com.sampahkita.app.data.model.Role
 import com.sampahkita.app.data.preferences.ThemeMode
 import com.sampahkita.app.ui.common.PlaceholderScreen
 import com.sampahkita.app.ui.home.HomeScreen
+import com.sampahkita.app.ui.peta.PetaScreen
+import com.sampahkita.app.data.dummy.DummyData
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.sampahkita.app.ui.login.LoginScreen
 import com.sampahkita.app.ui.splash.SplashScreen
 import com.sampahkita.app.ui.theme.ThemeSettingSection
@@ -47,9 +51,7 @@ fun homeRouteFor(role: Role): String =
 
 /** Route yang belum dikerjakan; masing-masing menampilkan placeholder. */
 private val placeholderScreens = listOf(
-    Screen.Peta,
     Screen.Katalog,
-    Screen.TiketSetor,
     Screen.Tabungan,
     Screen.Pencairan,
     Screen.Scan,
@@ -69,7 +71,8 @@ fun AppNavHost(
     val currentUser by remember(authRepository) { authRepository.currentUser }
         .collectAsStateWithLifecycle(initialValue = null)
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route
+    // Buang bagian argumen opsional, mis. "tiket_setor?bankSampahId={...}" → "tiket_setor".
+    val currentRoute = backStackEntry?.destination?.route?.substringBefore('?')
 
     val role = currentUser?.role
     val navItems = role?.let { navItemsFor(it) }.orEmpty()
@@ -139,6 +142,39 @@ fun AppNavHost(
                         }
                     },
                 )
+            }
+            composable(Screen.Peta.route) {
+                PetaScreen(
+                    onSetorKeSini = { bankSampahId ->
+                        navController.navigate(Screen.TiketSetor.createRoute(bankSampahId)) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                        }
+                    },
+                )
+            }
+            // TiketSetor: placeholder (fitur 07) yang sudah menerima bankSampahId opsional.
+            composable(
+                route = Screen.TiketSetor.routePattern,
+                arguments = listOf(
+                    navArgument(Screen.TiketSetor.ARG_BANK_SAMPAH_ID) {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
+                ),
+            ) { entry ->
+                val bankSampahId = entry.arguments?.getString(Screen.TiketSetor.ARG_BANK_SAMPAH_ID)
+                val bank = DummyData.bankSampah.firstOrNull { it.id == bankSampahId }
+                PlaceholderScreen(judul = Screen.TiketSetor.judul) {
+                    if (bank != null) {
+                        Text(
+                            text = "Bank tujuan: ${bank.nama}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
+                }
             }
             // Beranda Petugas: placeholder + ikon tema di TopAppBar.
             composable(Screen.HomePetugas.route) {

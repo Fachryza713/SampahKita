@@ -32,6 +32,7 @@ object DummyData {
         role = Role.PETUGAS,
         saldo = 0,
         totalKg = 0.0,
+        bankSampahId = "bs-01",
     )
 
     val akun: List<AkunDemo> = listOf(

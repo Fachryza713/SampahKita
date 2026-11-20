@@ -10,4 +10,6 @@ data class User(
     val role: Role,
     val saldo: Long,
     val totalKg: Double,
+    /** Unit Bank Sampah tempat petugas bertugas (null untuk nasabah). */
+    val bankSampahId: String? = null,
 )

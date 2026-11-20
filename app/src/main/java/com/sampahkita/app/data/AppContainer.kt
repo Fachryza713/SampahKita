@@ -9,16 +9,19 @@ import com.sampahkita.app.data.repository.FakeBankSampahRepository
 import com.sampahkita.app.data.repository.FakeKategoriRepository
 import com.sampahkita.app.data.repository.FakeTiketRepository
 import com.sampahkita.app.data.repository.FakeTransaksiRepository
-import com.sampahkita.app.data.repository.TiketRepository
+import com.sampahkita.app.data.repository.FakeUserRepository
 import com.sampahkita.app.data.repository.KategoriRepository
+import com.sampahkita.app.data.repository.TiketRepository
 import com.sampahkita.app.data.repository.TransaksiRepository
+import com.sampahkita.app.data.repository.UserRepository
 
 /**
  * Tempat membuat repository satu kali untuk seluruh aplikasi.
  * Ganti implementasi Fake... di sini saat backend asli siap.
  */
 class AppContainer(context: Context) {
-    val authRepository: AuthRepository = FakeAuthRepository(SessionPreferences(context))
+    val userRepository: UserRepository = FakeUserRepository()
+    val authRepository: AuthRepository = FakeAuthRepository(SessionPreferences(context), userRepository)
     val kategoriRepository: KategoriRepository = FakeKategoriRepository()
     val bankSampahRepository: BankSampahRepository = FakeBankSampahRepository()
     val transaksiRepository: TransaksiRepository = FakeTransaksiRepository()

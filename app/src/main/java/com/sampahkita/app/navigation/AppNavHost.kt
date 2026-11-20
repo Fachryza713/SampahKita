@@ -17,7 +17,6 @@ import androidx.navigation.compose.rememberNavController
 import com.sampahkita.app.data.auth.AuthRepository
 import com.sampahkita.app.data.model.Role
 import com.sampahkita.app.data.preferences.ThemeMode
-import com.sampahkita.app.ui.common.PlaceholderScreen
 import com.sampahkita.app.ui.home.HomeScreen
 import com.sampahkita.app.ui.peta.PetaScreen
 import com.sampahkita.app.ui.katalog.KatalogScreen
@@ -29,7 +28,10 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.sampahkita.app.ui.login.LoginScreen
 import com.sampahkita.app.ui.splash.SplashScreen
-import com.sampahkita.app.ui.theme.ThemeToggleButton
+import com.sampahkita.app.ui.petugas.home.HomePetugasScreen
+import com.sampahkita.app.ui.petugas.katalog.KelolaKatalogScreen
+import com.sampahkita.app.ui.petugas.scan.ScanScreen
+import com.sampahkita.app.ui.petugas.validasi.ValidasiPencairanScreen
 import com.sampahkita.app.ui.theme.isDarkTheme
 import com.sampahkita.app.ui.theme.toggledThemeMode
 import kotlinx.coroutines.flow.first
@@ -38,12 +40,6 @@ import kotlinx.coroutines.flow.first
 fun homeRouteFor(role: Role): String =
     if (role == Role.PETUGAS) Screen.HomePetugas.route else Screen.Home.route
 
-/** Route yang belum dikerjakan; masing-masing menampilkan placeholder. */
-private val placeholderScreens = listOf(
-    Screen.Scan,
-    Screen.KelolaKatalog,
-    Screen.ValidasiPencairan,
-)
 
 @Composable
 fun AppNavHost(
@@ -189,17 +185,20 @@ fun AppNavHost(
             composable(Screen.Pencairan.route) {
                 PencairanScreen(onBack = { navController.popBackStack() })
             }
-            // Beranda Petugas: placeholder + ikon tema di TopAppBar.
+            // ---------- Petugas ----------
             composable(Screen.HomePetugas.route) {
-                PlaceholderScreen(
-                    judul = Screen.HomePetugas.judul,
-                    topBarActions = {
-                        ThemeToggleButton(isDark = isDark) {
-                            onThemeModeChange(toggledThemeMode(isDark))
-                        }
+                HomePetugasScreen(
+                    isDark = isDark,
+                    onToggleTheme = { onThemeModeChange(toggledThemeMode(isDark)) },
+                    onScan = { navController.navigateTab(Screen.Scan.route, Screen.HomePetugas.route) },
+                    onLihatSemuaPencairan = {
+                        navController.navigateTab(Screen.ValidasiPencairan.route, Screen.HomePetugas.route)
                     },
                 )
             }
+            composable(Screen.Scan.route) { ScanScreen() }
+            composable(Screen.KelolaKatalog.route) { KelolaKatalogScreen() }
+            composable(Screen.ValidasiPencairan.route) { ValidasiPencairanScreen() }
             composable(Screen.Profil.route) {
                 ProfilScreen(
                     themeMode = themeMode,
@@ -211,9 +210,15 @@ fun AppNavHost(
                     },
                 )
             }
-            placeholderScreens.forEach { screen ->
-                composable(screen.route) { PlaceholderScreen(judul = screen.judul) }
-            }
         }
+    }
+}
+
+/** Buka route sebagai tab bottom nav (state tab lain tetap tersimpan). */
+private fun NavHostController.navigateTab(route: String, homeRoute: String) {
+    navigate(route) {
+        popUpTo(homeRoute) { saveState = true }
+        launchSingleTop = true
+        restoreState = true
     }
 }

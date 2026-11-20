@@ -81,7 +81,8 @@ class TabunganViewModel(application: Application) : AndroidViewModel(application
         }
         // Ikuti perubahan riwayat (mis. pengajuan pencairan baru dari fitur 09).
         viewModelScope.launch {
-            container.transaksiRepository.riwayat.collect { transaksi ->
+            val nasabahId = container.authRepository.currentUser.first()?.id.orEmpty()
+            container.transaksiRepository.riwayatNasabah(nasabahId).collect { transaksi ->
                 _uiState.update { it.copy(isLoading = false, semua = transaksi) }
             }
         }

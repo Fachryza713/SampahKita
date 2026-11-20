@@ -17,13 +17,13 @@ class FakeTiketRepositoryTest {
 
     @Test
     fun kodeTiketDariTanggalDanNomorUrut() = runBlocking {
-        assertEquals("SK-20261120-0012", repo.buatTiket("bs-01", items).kodeQr)
-        assertEquals("SK-20261120-0013", repo.buatTiket("bs-01", items).kodeQr)
+        assertEquals("SK-20261120-0012", repo.buatTiket("u-001", "bs-01", items).kodeQr)
+        assertEquals("SK-20261120-0013", repo.buatTiket("u-001", "bs-01", items).kodeQr)
     }
 
     @Test
     fun tiketBaruMenjadiAktifDanBerlaku24Jam() = runBlocking {
-        val tiket = repo.buatTiket("bs-02", items)
+        val tiket = repo.buatTiket("u-001", "bs-02", items)
         val aktif = repo.tiketAktif.first()
         assertEquals(tiket.id, aktif?.id)
         assertEquals(StatusTiket.MENUNGGU, aktif?.status)
@@ -32,7 +32,7 @@ class FakeTiketRepositoryTest {
 
     @Test
     fun tiketDibatalkanTidakLagiAktif() = runBlocking {
-        val tiket = repo.buatTiket("bs-01", items)
+        val tiket = repo.buatTiket("u-001", "bs-01", items)
         repo.batalkan(tiket.id)
         assertNull(repo.tiketAktif.first())
     }

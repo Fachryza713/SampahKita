@@ -26,7 +26,7 @@ class PencairanTest {
     @Test
     fun saldoTersediaDikurangiPengajuanMenunggu() = runBlocking {
         val repo = FakeTransaksiRepository(sekarang = { LocalDateTime.of(2026, 11, 20, 23, 30) })
-        repo.ajukanPencairan(25_000, "bs-01", "Pencairan tunai")
+        repo.ajukanPencairan("u-001", 25_000, "bs-01", "Pencairan tunai")
         val pencairan = repo.riwayat.first().filter { it.jenis == JenisTransaksi.PENCAIRAN }
         val state = PencairanUiState(saldo = 45_500, pengajuan = pencairan)
 

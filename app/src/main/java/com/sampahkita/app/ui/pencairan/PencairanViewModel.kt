@@ -81,7 +81,8 @@ class PencairanViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
         viewModelScope.launch {
-            transaksiRepository.riwayat.collect { list ->
+            val nasabahId = container.authRepository.currentUser.first()?.id.orEmpty()
+            transaksiRepository.riwayatNasabah(nasabahId).collect { list ->
                 _uiState.update { s -> s.copy(pengajuan = list.filter { it.jenis == JenisTransaksi.PENCAIRAN }) }
             }
         }
@@ -116,6 +117,7 @@ class PencairanViewModel(application: Application) : AndroidViewModel(applicatio
         _uiState.update { it.copy(konfirmasi = false, isMengirim = true) }
         viewModelScope.launch {
             transaksiRepository.ajukanPencairan(
+                nasabahId = container.authRepository.currentUser.first()?.id.orEmpty(),
                 nominal = nominal,
                 bankSampahId = bank.id,
                 keterangan = "Pencairan tunai di ${bank.nama}",

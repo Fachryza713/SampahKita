@@ -19,6 +19,8 @@ data class TiketSetor(
     val status: StatusTiket,
     /** Format "yyyy-MM-dd HH:mm". */
     val dibuat: String,
+    /** Nasabah pemilik tiket. */
+    val nasabahId: String = "",
 ) {
     /** Tiket berlaku 24 jam sejak dibuat; format sama dengan [dibuat]. */
     val berlakuSampai: String

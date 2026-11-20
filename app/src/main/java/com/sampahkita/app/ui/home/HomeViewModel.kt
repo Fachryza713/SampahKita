@@ -61,7 +61,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val user = container.authRepository.currentUser.first()
             val kategori = container.kategoriRepository.getKategori()
             val semuaBank = container.bankSampahRepository.getBankSampah()
-            val transaksi = container.transaksiRepository.getRiwayat().take(3)
+            val transaksi = container.transaksiRepository.riwayatNasabah(user?.id.orEmpty()).first().take(3)
             _uiState.update {
                 it.copy(
                     isLoading = false,

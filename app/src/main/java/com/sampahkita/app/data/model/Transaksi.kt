@@ -21,4 +21,8 @@ data class Transaksi(
     /** Nama petugas yang memproses, jika sudah diproses. */
     val petugas: String? = null,
     val bankSampahId: String? = null,
+    /** Nasabah pemilik transaksi. */
+    val nasabahId: String = "",
+    /** Diisi petugas saat pencairan ditolak. */
+    val alasanDitolak: String? = null,
 )

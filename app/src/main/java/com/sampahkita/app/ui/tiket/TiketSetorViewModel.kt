@@ -13,6 +13,7 @@ import com.sampahkita.app.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.roundToLong
@@ -104,7 +105,8 @@ class TiketSetorViewModel(
             val items = s.kategori.mapNotNull { k ->
                 s.dipilih[k.id]?.let { ItemSetor(kategoriId = k.id, perkiraanKg = it) }
             }
-            tiketRepository.buatTiket(bank.id, items)
+            val nasabahId = container.authRepository.currentUser.first()?.id.orEmpty()
+            tiketRepository.buatTiket(nasabahId, bank.id, items)
             _uiState.update { it.copy(isMembuat = false, dipilih = emptyMap()) }
         }
     }

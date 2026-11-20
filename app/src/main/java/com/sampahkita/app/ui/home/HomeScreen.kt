@@ -20,7 +20,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
+import androidx.compose.material.icons.outlined.QrCode2
+import com.sampahkita.app.data.model.TiketSetor
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.ArrowDownward
@@ -144,6 +147,16 @@ private fun HomeContent(state: HomeUiState, onNavigate: (Screen) -> Unit) {
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
+        state.tiketAktif?.let { tiket ->
+            item(key = "tiketAktif") {
+                TiketAktifCard(
+                    tiket = tiket,
+                    namaBank = state.namaBank(tiket.bankSampahId),
+                    onClick = { onNavigate(Screen.TiketSetor) },
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+            }
+        }
         item {
             AksiCepat(onNavigate = onNavigate, modifier = Modifier.padding(horizontal = 16.dp))
         }
@@ -251,6 +264,52 @@ private fun SaldoCard(
                     modifier = Modifier.weight(1f),
                 ) { Text("Riwayat") }
             }
+        }
+    }
+}
+
+// ---------- Tiket aktif ----------
+
+private fun HomeUiState.namaBank(id: String): String =
+    semuaBank.firstOrNull { it.id == id }?.nama ?: "Bank Sampah"
+
+@Composable
+private fun TiketAktifCard(
+    tiket: TiketSetor,
+    namaBank: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        ),
+    ) {
+        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Outlined.QrCode2, contentDescription = null, modifier = Modifier.size(32.dp))
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text("Tiket setor aktif", style = MaterialTheme.typography.labelLarge)
+                Text(
+                    text = tiket.kodeQr,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = namaBank,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = "Berlaku s.d. ${formatTanggal(tiket.berlakuSampai)}",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            Icon(Icons.AutoMirrored.Outlined.KeyboardArrowRight, contentDescription = "Lihat tiket")
         }
     }
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.sampahkita.app.SampahKitaApp
 import com.sampahkita.app.data.model.BankSampah
 import com.sampahkita.app.data.model.KategoriSampah
+import com.sampahkita.app.data.model.TiketSetor
 import com.sampahkita.app.data.model.Transaksi
 import com.sampahkita.app.data.model.User
 import kotlinx.coroutines.Job
@@ -23,7 +24,10 @@ data class HomeUiState(
     val user: User? = null,
     val kategori: List<KategoriSampah> = emptyList(),
     val bankTerdekat: BankSampah? = null,
+    val semuaBank: List<BankSampah> = emptyList(),
     val transaksiTerakhir: List<Transaksi> = emptyList(),
+    /** Tiket setor yang masih MENUNGGU, ditampilkan sebagai kartu kecil. */
+    val tiketAktif: TiketSetor? = null,
 )
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
@@ -37,6 +41,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         load()
+        viewModelScope.launch {
+            container.tiketRepository.tiketAktif.collect { tiket ->
+                _uiState.update { it.copy(tiketAktif = tiket) }
+            }
+        }
     }
 
     /** Dipanggil oleh pull-to-refresh. */
@@ -51,16 +60,19 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             delay(500) // simulasi jaringan
             val user = container.authRepository.currentUser.first()
             val kategori = container.kategoriRepository.getKategori()
-            val bankTerdekat = container.bankSampahRepository.getBankSampah().firstOrNull()
+            val semuaBank = container.bankSampahRepository.getBankSampah()
             val transaksi = container.transaksiRepository.getRiwayat().take(3)
-            _uiState.value = HomeUiState(
-                isLoading = false,
-                isRefreshing = false,
-                user = user,
-                kategori = kategori,
-                bankTerdekat = bankTerdekat,
-                transaksiTerakhir = transaksi,
-            )
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    isRefreshing = false,
+                    user = user,
+                    kategori = kategori,
+                    bankTerdekat = semuaBank.firstOrNull(),
+                    semuaBank = semuaBank,
+                    transaksiTerakhir = transaksi,
+                )
+            }
         }
     }
 }

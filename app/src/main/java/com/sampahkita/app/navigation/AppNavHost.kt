@@ -34,8 +34,7 @@ import com.sampahkita.app.ui.common.PlaceholderScreen
 import com.sampahkita.app.ui.home.HomeScreen
 import com.sampahkita.app.ui.peta.PetaScreen
 import com.sampahkita.app.ui.katalog.KatalogScreen
-import com.sampahkita.app.ui.common.formatKg
-import com.sampahkita.app.data.dummy.DummyData
+import com.sampahkita.app.ui.tiket.TiketSetorScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.sampahkita.app.ui.login.LoginScreen
@@ -180,27 +179,16 @@ fun AppNavHost(
                         defaultValue = null
                     },
                 ),
-            ) { entry ->
-                val bankSampahId = entry.arguments?.getString(Screen.TiketSetor.ARG_BANK_SAMPAH_ID)
-                val items = Screen.TiketSetor.decodeItems(entry.arguments?.getString(Screen.TiketSetor.ARG_ITEMS))
-                val bank = DummyData.bankSampah.firstOrNull { it.id == bankSampahId }
-                PlaceholderScreen(judul = Screen.TiketSetor.judul) {
-                    if (bank != null) {
-                        Text(
-                            text = "Bank tujuan: ${bank.nama}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                    }
-                    items.forEach { (kategoriId, kg) ->
-                        val nama = DummyData.kategori.firstOrNull { it.id == kategoriId }?.nama ?: kategoriId
-                        Text(
-                            text = "$nama: ${formatKg(kg)}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
+            ) {
+                // Argumen dibaca TiketSetorViewModel lewat SavedStateHandle.
+                TiketSetorScreen(
+                    onKembaliKeBeranda = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Home.route) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
+                )
             }
             // Beranda Petugas: placeholder + ikon tema di TopAppBar.
             composable(Screen.HomePetugas.route) {

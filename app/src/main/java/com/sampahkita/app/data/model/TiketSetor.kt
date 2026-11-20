@@ -1,5 +1,8 @@
 package com.sampahkita.app.data.model
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 enum class StatusTiket { MENUNGGU, SELESAI, BATAL, KEDALUWARSA }
 
 data class ItemSetor(
@@ -16,4 +19,14 @@ data class TiketSetor(
     val status: StatusTiket,
     /** Format "yyyy-MM-dd HH:mm". */
     val dibuat: String,
-)
+) {
+    /** Tiket berlaku 24 jam sejak dibuat; format sama dengan [dibuat]. */
+    val berlakuSampai: String
+        get() = runCatching {
+            LocalDateTime.parse(dibuat, FORMAT_WAKTU).plusHours(24).format(FORMAT_WAKTU)
+        }.getOrDefault(dibuat)
+
+    private companion object {
+        val FORMAT_WAKTU: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+    }
+}

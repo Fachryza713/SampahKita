@@ -7,7 +7,9 @@ import com.sampahkita.app.data.preferences.SessionPreferences
 import com.sampahkita.app.data.repository.BankSampahRepository
 import com.sampahkita.app.data.repository.FakeBankSampahRepository
 import com.sampahkita.app.data.repository.FakeKategoriRepository
+import com.sampahkita.app.data.repository.FakeTiketRepository
 import com.sampahkita.app.data.repository.FakeTransaksiRepository
+import com.sampahkita.app.data.repository.TiketRepository
 import com.sampahkita.app.data.repository.KategoriRepository
 import com.sampahkita.app.data.repository.TransaksiRepository
 
@@ -20,4 +22,5 @@ class AppContainer(context: Context) {
     val kategoriRepository: KategoriRepository = FakeKategoriRepository()
     val bankSampahRepository: BankSampahRepository = FakeBankSampahRepository()
     val transaksiRepository: TransaksiRepository = FakeTransaksiRepository()
+    val tiketRepository: TiketRepository = FakeTiketRepository()
 }

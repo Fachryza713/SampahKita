@@ -31,6 +31,7 @@ import com.sampahkita.app.data.auth.AuthRepository
 import com.sampahkita.app.data.model.Role
 import com.sampahkita.app.data.preferences.ThemeMode
 import com.sampahkita.app.ui.common.PlaceholderScreen
+import com.sampahkita.app.ui.home.HomeScreen
 import com.sampahkita.app.ui.login.LoginScreen
 import com.sampahkita.app.ui.splash.SplashScreen
 import com.sampahkita.app.ui.theme.ThemeSettingSection
@@ -121,18 +122,34 @@ fun AppNavHost(
                     },
                 )
             }
-            // Beranda Nasabah & Petugas: placeholder + ikon tema di TopAppBar.
-            listOf(Screen.Home, Screen.HomePetugas).forEach { screen ->
-                composable(screen.route) {
-                    PlaceholderScreen(
-                        judul = screen.judul,
-                        topBarActions = {
-                            ThemeToggleButton(isDark = isDark) {
-                                onThemeModeChange(toggledThemeMode(isDark))
+            composable(Screen.Home.route) {
+                HomeScreen(
+                    isDark = isDark,
+                    onToggleTheme = { onThemeModeChange(toggledThemeMode(isDark)) },
+                    onNavigate = { tujuan ->
+                        // Tujuan yang ada di bottom nav dibuka sebagai tab; sisanya ditumpuk biasa.
+                        if (nasabahNavItems.any { it.screen == tujuan }) {
+                            navController.navigate(tujuan.route) {
+                                popUpTo(Screen.Home.route) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                        },
-                    )
-                }
+                        } else {
+                            navController.navigate(tujuan.route)
+                        }
+                    },
+                )
+            }
+            // Beranda Petugas: placeholder + ikon tema di TopAppBar.
+            composable(Screen.HomePetugas.route) {
+                PlaceholderScreen(
+                    judul = Screen.HomePetugas.judul,
+                    topBarActions = {
+                        ThemeToggleButton(isDark = isDark) {
+                            onThemeModeChange(toggledThemeMode(isDark))
+                        }
+                    },
+                )
             }
             // Profil: placeholder + bagian "Tampilan" + tombol Keluar.
             composable(Screen.Profil.route) {

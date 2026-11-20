@@ -82,6 +82,14 @@ object DummyData {
         KategoriSampah("k-06", "Minyak Jelantah", 5_000, "minyak"),
     )
 
+    /** Faktor pengali harga per Bank Sampah (harga dasar = [kategori]). */
+    val faktorHargaBank: Map<String, Double> = mapOf(
+        "bs-01" to 1.00,
+        "bs-02" to 1.05,
+        "bs-03" to 0.95,
+        "bs-04" to 1.10,
+    )
+
     /** Riwayat transaksi nasabah demo, urut dari yang terbaru. */
     val transaksi: List<Transaksi> = listOf(
         Transaksi("t-008", JenisTransaksi.SETOR, 9_500, "Setor Botol PET 1,5 kg & Kardus 1,4 kg", "2026-11-18 10:15", StatusTransaksi.BERHASIL),

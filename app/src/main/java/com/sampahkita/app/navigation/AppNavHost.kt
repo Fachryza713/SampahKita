@@ -33,6 +33,8 @@ import com.sampahkita.app.data.preferences.ThemeMode
 import com.sampahkita.app.ui.common.PlaceholderScreen
 import com.sampahkita.app.ui.home.HomeScreen
 import com.sampahkita.app.ui.peta.PetaScreen
+import com.sampahkita.app.ui.katalog.KatalogScreen
+import com.sampahkita.app.ui.common.formatKg
 import com.sampahkita.app.data.dummy.DummyData
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -51,7 +53,6 @@ fun homeRouteFor(role: Role): String =
 
 /** Route yang belum dikerjakan; masing-masing menampilkan placeholder. */
 private val placeholderScreens = listOf(
-    Screen.Katalog,
     Screen.Tabungan,
     Screen.Pencairan,
     Screen.Scan,
@@ -153,7 +154,18 @@ fun AppNavHost(
                     },
                 )
             }
-            // TiketSetor: placeholder (fitur 07) yang sudah menerima bankSampahId opsional.
+            composable(Screen.Katalog.route) {
+                KatalogScreen(
+                    onBack = { navController.popBackStack() },
+                    onBuatTiket = { bankSampahId, items ->
+                        navController.navigate(Screen.TiketSetor.createRoute(bankSampahId, items)) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                        }
+                    },
+                )
+            }
+            // TiketSetor: placeholder (fitur 07) yang sudah menerima bankSampahId & items opsional.
             composable(
                 route = Screen.TiketSetor.routePattern,
                 arguments = listOf(
@@ -162,9 +174,15 @@ fun AppNavHost(
                         nullable = true
                         defaultValue = null
                     },
+                    navArgument(Screen.TiketSetor.ARG_ITEMS) {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    },
                 ),
             ) { entry ->
                 val bankSampahId = entry.arguments?.getString(Screen.TiketSetor.ARG_BANK_SAMPAH_ID)
+                val items = Screen.TiketSetor.decodeItems(entry.arguments?.getString(Screen.TiketSetor.ARG_ITEMS))
                 val bank = DummyData.bankSampah.firstOrNull { it.id == bankSampahId }
                 PlaceholderScreen(judul = Screen.TiketSetor.judul) {
                     if (bank != null) {
@@ -172,6 +190,14 @@ fun AppNavHost(
                             text = "Bank tujuan: ${bank.nama}",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
+                    items.forEach { (kategoriId, kg) ->
+                        val nama = DummyData.kategori.firstOrNull { it.id == kategoriId }?.nama ?: kategoriId
+                        Text(
+                            text = "$nama: ${formatKg(kg)}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }

@@ -36,6 +36,7 @@ import com.sampahkita.app.ui.peta.PetaScreen
 import com.sampahkita.app.ui.katalog.KatalogScreen
 import com.sampahkita.app.ui.tiket.TiketSetorScreen
 import com.sampahkita.app.ui.tabungan.TabunganScreen
+import com.sampahkita.app.ui.pencairan.PencairanScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.sampahkita.app.ui.login.LoginScreen
@@ -53,7 +54,6 @@ fun homeRouteFor(role: Role): String =
 
 /** Route yang belum dikerjakan; masing-masing menampilkan placeholder. */
 private val placeholderScreens = listOf(
-    Screen.Pencairan,
     Screen.Scan,
     Screen.KelolaKatalog,
     Screen.ValidasiPencairan,
@@ -200,6 +200,9 @@ fun AppNavHost(
                         }
                     },
                 )
+            }
+            composable(Screen.Pencairan.route) {
+                PencairanScreen(onBack = { navController.popBackStack() })
             }
             // Beranda Petugas: placeholder + ikon tema di TopAppBar.
             composable(Screen.HomePetugas.route) {

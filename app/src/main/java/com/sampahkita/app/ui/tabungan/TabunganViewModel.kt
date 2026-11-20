@@ -75,17 +75,14 @@ class TabunganViewModel(application: Application) : AndroidViewModel(application
     init {
         viewModelScope.launch {
             val user = container.authRepository.currentUser.first()
-            val transaksi = container.transaksiRepository.getRiwayat()
             val kategori = container.kategoriRepository.getKategori()
             val bankList = container.bankSampahRepository.getBankSampah()
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    user = user,
-                    semua = transaksi,
-                    kategori = kategori,
-                    bankList = bankList,
-                )
+            _uiState.update { it.copy(user = user, kategori = kategori, bankList = bankList) }
+        }
+        // Ikuti perubahan riwayat (mis. pengajuan pencairan baru dari fitur 09).
+        viewModelScope.launch {
+            container.transaksiRepository.riwayat.collect { transaksi ->
+                _uiState.update { it.copy(isLoading = false, semua = transaksi) }
             }
         }
     }

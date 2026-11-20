@@ -1,26 +1,13 @@
 package com.sampahkita.app.navigation
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -37,16 +24,15 @@ import com.sampahkita.app.ui.katalog.KatalogScreen
 import com.sampahkita.app.ui.tiket.TiketSetorScreen
 import com.sampahkita.app.ui.tabungan.TabunganScreen
 import com.sampahkita.app.ui.pencairan.PencairanScreen
+import com.sampahkita.app.ui.profil.ProfilScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.sampahkita.app.ui.login.LoginScreen
 import com.sampahkita.app.ui.splash.SplashScreen
-import com.sampahkita.app.ui.theme.ThemeSettingSection
 import com.sampahkita.app.ui.theme.ThemeToggleButton
 import com.sampahkita.app.ui.theme.isDarkTheme
 import com.sampahkita.app.ui.theme.toggledThemeMode
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 /** Route beranda sesuai peran. */
 fun homeRouteFor(role: Role): String =
@@ -67,7 +53,6 @@ fun AppNavHost(
     navController: NavHostController = rememberNavController(),
 ) {
     val isDark = themeMode.isDarkTheme()
-    val scope = rememberCoroutineScope()
     val currentUser by remember(authRepository) { authRepository.currentUser }
         .collectAsStateWithLifecycle(initialValue = null)
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -215,35 +200,16 @@ fun AppNavHost(
                     },
                 )
             }
-            // Profil: placeholder + bagian "Tampilan" + tombol Keluar.
             composable(Screen.Profil.route) {
-                PlaceholderScreen(judul = Screen.Profil.judul) {
-                    ThemeSettingSection(
-                        selected = themeMode,
-                        onSelect = onThemeModeChange,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Spacer(Modifier.height(24.dp))
-                    // TODO: dialog konfirmasi dibuat di fitur 10.
-                    OutlinedButton(
-                        onClick = {
-                            scope.launch {
-                                authRepository.logout()
-                                navController.navigate(Screen.Login.route) {
-                                    popUpTo(navController.graph.id) { inclusive = true }
-                                }
-                            }
-                        },
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = MaterialTheme.colorScheme.error,
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("Keluar")
-                    }
-                }
+                ProfilScreen(
+                    themeMode = themeMode,
+                    onThemeModeChange = onThemeModeChange,
+                    onLogoutSelesai = {
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(navController.graph.id) { inclusive = true }
+                        }
+                    },
+                )
             }
             placeholderScreens.forEach { screen ->
                 composable(screen.route) { PlaceholderScreen(judul = screen.judul) }

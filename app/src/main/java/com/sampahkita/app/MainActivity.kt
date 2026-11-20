@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
             SampahKitaTheme(darkTheme = darkTheme) {
                 AppNavHost(
+                    authRepository = (application as SampahKitaApp).container.authRepository,
                     themeMode = themeMode,
                     onThemeModeChange = themeViewModel::setThemeMode,
                 )

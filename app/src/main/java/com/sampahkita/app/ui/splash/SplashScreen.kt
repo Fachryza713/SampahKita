@@ -20,8 +20,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
+/** @param onSelesai dipanggil setelah splash tampil ±1 detik (boleh membaca sesi). */
 @Composable
-fun SplashScreen(onSelesai: () -> Unit) {
+fun SplashScreen(onSelesai: suspend () -> Unit) {
     LaunchedEffect(Unit) {
         delay(1_000)
         onSelesai()

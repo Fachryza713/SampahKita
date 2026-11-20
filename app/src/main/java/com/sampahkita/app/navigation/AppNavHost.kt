@@ -35,6 +35,7 @@ import com.sampahkita.app.ui.home.HomeScreen
 import com.sampahkita.app.ui.peta.PetaScreen
 import com.sampahkita.app.ui.katalog.KatalogScreen
 import com.sampahkita.app.ui.tiket.TiketSetorScreen
+import com.sampahkita.app.ui.tabungan.TabunganScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.sampahkita.app.ui.login.LoginScreen
@@ -52,7 +53,6 @@ fun homeRouteFor(role: Role): String =
 
 /** Route yang belum dikerjakan; masing-masing menampilkan placeholder. */
 private val placeholderScreens = listOf(
-    Screen.Tabungan,
     Screen.Pencairan,
     Screen.Scan,
     Screen.KelolaKatalog,
@@ -186,6 +186,17 @@ fun AppNavHost(
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Home.route) { inclusive = false }
                             launchSingleTop = true
+                        }
+                    },
+                )
+            }
+            composable(Screen.Tabungan.route) {
+                TabunganScreen(
+                    onSetorSampah = {
+                        navController.navigate(Screen.TiketSetor.route) {
+                            popUpTo(Screen.Home.route) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     },
                 )

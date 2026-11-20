@@ -1,6 +1,7 @@
 package com.sampahkita.app.data.dummy
 
 import com.sampahkita.app.data.model.BankSampah
+import com.sampahkita.app.data.model.ItemSetor
 import com.sampahkita.app.data.model.JenisTransaksi
 import com.sampahkita.app.data.model.KategoriSampah
 import com.sampahkita.app.data.model.Role
@@ -91,14 +92,51 @@ object DummyData {
     )
 
     /** Riwayat transaksi nasabah demo, urut dari yang terbaru. */
+    /**
+     * Riwayat transaksi nasabah demo, urut dari yang terbaru.
+     * Nominal setor = berat × harga dasar [kategori]; total setor − pencairan = saldo 45.500.
+     */
     val transaksi: List<Transaksi> = listOf(
-        Transaksi("t-008", JenisTransaksi.SETOR, 9_500, "Setor Botol PET 1,5 kg & Kardus 1,4 kg", "2026-11-18 10:15", StatusTransaksi.BERHASIL),
-        Transaksi("t-007", JenisTransaksi.PENCAIRAN, 20_000, "Pencairan tunai di Bank Sampah Lestari Pogung", "2026-11-12 13:40", StatusTransaksi.BERHASIL),
-        Transaksi("t-006", JenisTransaksi.SETOR, 14_400, "Setor Kaleng Aluminium 1,2 kg", "2026-11-05 09:05", StatusTransaksi.BERHASIL),
-        Transaksi("t-005", JenisTransaksi.SETOR, 7_500, "Setor Minyak Jelantah 1,5 kg", "2026-10-27 15:20", StatusTransaksi.BERHASIL),
-        Transaksi("t-004", JenisTransaksi.PENCAIRAN, 15_000, "Pencairan tunai di Bank Sampah Hijau Karangmalang", "2026-10-20 11:00", StatusTransaksi.BERHASIL),
-        Transaksi("t-003", JenisTransaksi.SETOR, 10_000, "Setor Kertas HVS 3,0 kg & Kardus 1,6 kg", "2026-10-14 08:45", StatusTransaksi.BERHASIL),
-        Transaksi("t-002", JenisTransaksi.SETOR, 24_600, "Setor Gelas Plastik 2,4 kg & Botol PET 4,05 kg", "2026-10-02 16:10", StatusTransaksi.BERHASIL),
-        Transaksi("t-001", JenisTransaksi.SETOR, 14_500, "Setor Kardus 5,8 kg", "2026-09-25 10:30", StatusTransaksi.BERHASIL),
+        Transaksi(
+            "t-008", JenisTransaksi.SETOR, 9_500, "Setor Botol PET 1,5 kg & Kardus 1,4 kg", "2026-11-18 10:15",
+            StatusTransaksi.BERHASIL, rincian = listOf(berat("k-02", 1.5), berat("k-01", 1.4)),
+            petugas = petugas.nama, bankSampahId = "bs-01",
+        ),
+        Transaksi(
+            "t-007", JenisTransaksi.PENCAIRAN, 20_000, "Pencairan tunai di Bank Sampah Lestari Pogung", "2026-11-12 13:40",
+            StatusTransaksi.BERHASIL, petugas = petugas.nama, bankSampahId = "bs-01",
+        ),
+        Transaksi(
+            "t-006", JenisTransaksi.SETOR, 14_400, "Setor Kaleng Aluminium 1,2 kg", "2026-11-05 09:05",
+            StatusTransaksi.BERHASIL, rincian = listOf(berat("k-05", 1.2)),
+            petugas = petugas.nama, bankSampahId = "bs-01",
+        ),
+        Transaksi(
+            "t-005", JenisTransaksi.SETOR, 7_500, "Setor Minyak Jelantah 1,5 kg", "2026-10-27 15:20",
+            StatusTransaksi.BERHASIL, rincian = listOf(berat("k-06", 1.5)),
+            petugas = "Sri Wahyuni", bankSampahId = "bs-02",
+        ),
+        Transaksi(
+            "t-004", JenisTransaksi.PENCAIRAN, 15_000, "Pencairan tunai di Bank Sampah Hijau Karangmalang", "2026-10-20 11:00",
+            StatusTransaksi.BERHASIL, petugas = "Sri Wahyuni", bankSampahId = "bs-02",
+        ),
+        Transaksi(
+            "t-003", JenisTransaksi.SETOR, 10_000, "Setor Kertas HVS 3,0 kg & Kardus 1,6 kg", "2026-10-14 08:45",
+            StatusTransaksi.BERHASIL, rincian = listOf(berat("k-04", 3.0), berat("k-01", 1.6)),
+            petugas = petugas.nama, bankSampahId = "bs-01",
+        ),
+        Transaksi(
+            "t-002", JenisTransaksi.SETOR, 24_600, "Setor Gelas Plastik 2,0 kg & Botol PET 4,4 kg", "2026-10-02 16:10",
+            StatusTransaksi.BERHASIL, rincian = listOf(berat("k-03", 2.0), berat("k-02", 4.4)),
+            petugas = petugas.nama, bankSampahId = "bs-01",
+        ),
+        Transaksi(
+            "t-001", JenisTransaksi.SETOR, 14_500, "Setor Kardus 5,8 kg", "2026-09-25 10:30",
+            StatusTransaksi.BERHASIL, rincian = listOf(berat("k-01", 5.8)),
+            petugas = "Sri Wahyuni", bankSampahId = "bs-02",
+        ),
     )
+
+    /** Item hasil timbangan (perkiraan = aktual). */
+    private fun berat(kategoriId: String, kg: Double) = ItemSetor(kategoriId, kg, kg)
 }

@@ -16,4 +16,9 @@ data class Transaksi(
     /** Format "yyyy-MM-dd HH:mm". */
     val tanggal: String,
     val status: StatusTransaksi,
+    /** Rincian berat per kategori (hanya untuk SETOR; berat ada di [ItemSetor.beratAktualKg]). */
+    val rincian: List<ItemSetor> = emptyList(),
+    /** Nama petugas yang memproses, jika sudah diproses. */
+    val petugas: String? = null,
+    val bankSampahId: String? = null,
 )
